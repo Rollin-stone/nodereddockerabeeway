@@ -1,0 +1,340 @@
+[
+    {
+        "id": "a680553d.bcaec8",
+        "type": "tab",
+        "label": "Flow 3",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "fc0e3e07.0ff63",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "Orange Datavenue Secure",
+        "broker": "wss://liveobjects.orange-business.com:443/mqtt",
+        "port": "8883",
+        "tls": "55123de0.d37cd4",
+        "clientid": "liveobject",
+        "usetls": true,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+         "credentials": {
+            "user": "application",
+            "password": "ef8b29f47ef24f61841e65db05ce9108"
+        }
+    },
+    {
+        "id": "55123de0.d37cd4",
+        "type": "tls-config",
+        "z": "",
+        "name": "Orange Trust",
+        "cert": "",
+        "key": "",
+        "ca": "/usr/src/node-red/cert/CA-Root-Orange.cert",
+        "certname": "",
+        "keyname": "",
+        "caname": "CA-Root-Orange",
+        "servername": "",
+        "verifyservercert": true
+    },
+    {
+        "id": "9807e12c.0077c",
+        "type": "moduleclient",
+        "z": ""
+    },
+    {
+        "id": "99d8ca61.ef6168",
+        "type": "mqtt in",
+        "z": "a680553d.bcaec8",
+        "name": "Datavenue",
+        "topic": "fifo/griotabee",
+        "qos": "2",
+        "broker": "fc0e3e07.0ff63",
+        "x": 60,
+        "y": 240,
+        "wires": [
+            [
+                "7a368435.75924c",
+                "bed78a62.88fed8"
+            ]
+        ]
+    },
+    {
+        "id": "92fd22bc.dc69d",
+        "type": "function",
+        "z": "a680553d.bcaec8",
+        "name": "Data Message",
+        "func": "//var test=JSON.stringify(msg.payload);var capteurid=msg.payload.metadata.network.lora.devEUI;\nvar deviceID=msg.payload.metadata.network.lora.devEUI;\nvar temp=msg.payload.value.temperature.value;\nvar msgtype=msg.payload.value.messageType\nvar bat=msg.payload.value.battery.value;\nvar lon = msg.payload.location.lon;\nvar lat = msg.payload.location.lat\n\n\nvar donnees= {\n  \"deviceID\": deviceID,\n  \"temp\":temp,\n  \"humidity\":\"50\",\n    \"etat\":1,\n    \"battery\":bat,\n    \"location\" : {\n        \"lon\":lon,\n        \"lat\":lat,\n        \"alt\":\"0\",\n    }\n}\n\nvar newMsg = { payload: donnees};\nreturn newMsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 520,
+        "y": 460,
+        "wires": [
+            [
+                "a5133ba7.9bd1a8",
+                "ecac115e.24b35"
+            ]
+        ]
+    },
+    {
+        "id": "ecac115e.24b35",
+        "type": "debug",
+        "z": "a680553d.bcaec8",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 890,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "b1bc9168.7ed25",
+        "type": "switch",
+        "z": "a680553d.bcaec8",
+        "name": "",
+        "property": "payload.value.messageType",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "HEARTBEAT",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dataMessage",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "ENERGY-STATUS",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "POSITION",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "MISC",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "FRAME-PENDING",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 7,
+        "x": 370,
+        "y": 460,
+        "wires": [
+            [
+                "9c51b78a.2f4cb8"
+            ],
+            [
+                "92fd22bc.dc69d"
+            ],
+            [
+                "92fd22bc.dc69d"
+            ],
+            [
+                "92fd22bc.dc69d"
+            ],
+            [
+                "f0e56e76.8d1cf"
+            ],
+            [
+                "801f88f6.f0e138"
+            ],
+            [
+                "801f88f6.f0e138"
+            ]
+        ]
+    },
+    {
+        "id": "9c51b78a.2f4cb8",
+        "type": "function",
+        "z": "a680553d.bcaec8",
+        "name": "Hearbeat",
+        "func": "var capteurid=msg.payload.metadata.network.lora.devEUI;\nvar deviceID=msg.payload.metadata.network.lora.devEUI;\nvar temp=msg.payload.value.temperature.value;\nvar msgtype=\"Heartbeat\";\nvar bat=msg.payload.value.battery.value;\nvar lon = context.get('lon');\nvar lat = context.get('lat');\n\nvar donnees= {\n  \"deviceID\": deviceID,\n  \"temp\":temp,\n  \"humidity\":\"50\",\n    \"etat\":1,\n    \"mestype\":msgtype,\n    \"battery\":bat,\n}\n\nvar newMsg = { payload: donnees};\nreturn newMsg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 560,
+        "y": 340,
+        "wires": [
+            [
+                "a5133ba7.9bd1a8",
+                "ecac115e.24b35"
+            ]
+        ]
+    },
+    {
+        "id": "6776c295.d06e7c",
+        "type": "function",
+        "z": "a680553d.bcaec8",
+        "name": "Autre message",
+        "func": "//var deviceID=msg.payload.metadata.network.lora.devEUI;\nvar deviceID=\"20635F00C50000FE\"\n//var temp=msg.payload.value.temperature.value;\nvar msgtype=\"Alerte en déplacement\"\nvar bat=msg.payload.value.battery.value;\nvar lon = context.get('lon')||0;\nvar lat = context.get('lat')||0;\n\nvar donnees= {\n  \"deviceID\": deviceID,\n//  \"temp\":temp,\n  \"humidity\":\"50\",\n    \"etat\":2,\n    \"msgtype\":msgtype,\n    \"battery\":bat,\n    \"location\" : {\n        \"lon\":lon,\n        \"lat\":lat,\n        \"alt\":\"0\",\n    }\n}\n\nvar newMsg = { payload: donnees};\nreturn newMsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 760,
+        "y": 580,
+        "wires": [
+            [
+                "a5133ba7.9bd1a8",
+                "ecac115e.24b35"
+            ]
+        ]
+    },
+    {
+        "id": "801f88f6.f0e138",
+        "type": "switch",
+        "z": "a680553d.bcaec8",
+        "name": "",
+        "property": "payload.status.moving",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "true",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 470,
+        "y": 620,
+        "wires": [
+            [
+                "6776c295.d06e7c"
+            ],
+            [
+                "6776c295.d06e7c"
+            ]
+        ]
+    },
+    {
+        "id": "a5133ba7.9bd1a8",
+        "type": "moduleoutput",
+        "z": "a680553d.bcaec8",
+        "client": "9807e12c.0077c",
+        "output": "VersIoTHub",
+        "x": 1180,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "c89878ff.ca97b8",
+        "type": "inject",
+        "z": "a680553d.bcaec8",
+        "name": "",
+        "topic": "messge test",
+        "payload": "{\"metadata\":{\"connector\":\"lora\",\"source\":\"urn:lo:nsid:lora:20635F00C50000FE\",\"encoding\":\"abeeway_tracker_v1.2\",\"group\":{\"path\":\"/griotabee\",\"id\":\"Da7F7u\"},\"network\":{\"lora\":{\"signalLevel\":5,\"rssi\":-89,\"gatewayCnt\":1,\"esp\":-90.46,\"sf\":7,\"messageType\":\"UNCONFIRMED_DATA_UP\",\"port\":17,\"snr\":4,\"ack\":false,\"location\":{\"alt\":0,\"accuracy\":10000,\"lon\":3.098808,\"lat\":50.664314},\"fcnt\":4329,\"devEUI\":\"20635F00C50000FE\"}}},\"streamId\":\"urn:lora:20635F00C50000FE!uplink\",\"created\":\"2020-01-02T13:23:29.572Z\",\"extra\":{},\"location\":{\"provider\":\"lora\",\"alt\":0,\"accuracy\":10000,\"lon\":3.098808,\"lat\":50.664314},\"model\":\"model_abeeway_mastertracker_v5\",\"id\":\"5e0deed15f9d9296d8a883c0\",\"value\":{\"adt\":\"UNUSED\",\"messageType\":\"HEARTBEAT\",\"payload\":\"052097612040\",\"temperature\":{\"unit\":\"°C\",\"value\":5.07},\"ack\":2,\"deviceModel\":\"UNKNOWN\",\"resetCause\":\"\",\"battery\":{\"unit\":\"V\",\"valueFirmwarePrev15\":3.39,\"value\":3.63,\"inCharge\":false},\"status\":{\"onDemand\":false,\"appState\":\"idle\",\"userAlert\":false,\"periodic\":false,\"moving\":false,\"appMode\":\"motionTrack\"}},\"timestamp\":\"2020-01-02T13:23:29.971Z\",\"tags\":[\"BT\"]}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 110,
+        "y": 460,
+        "wires": [
+            [
+                "b1bc9168.7ed25"
+            ]
+        ]
+    },
+    {
+        "id": "23f2d3eb.d0f17c",
+        "type": "inject",
+        "z": "a680553d.bcaec8",
+        "name": "",
+        "topic": "",
+        "payload": "{\"metadata\":{\"connector\":\"lora\",\"source\":\"urn:lo:nsid:lora:20635F00C50000FE\",\"encoding\":\"abeeway_tracker_v1.2\",\"group\":{\"path\":\"/griotabee\",\"id\":\"Da7F7u\"},\"network\":{\"lora\":{\"signalLevel\":5,\"rssi\":-89,\"gatewayCnt\":1,\"esp\":-90.46,\"sf\":7,\"messageType\":\"UNCONFIRMED_DATA_UP\",\"port\":17,\"snr\":4,\"ack\":false,\"location\":{\"alt\":0,\"accuracy\":10000,\"lon\":3.098808,\"lat\":50.664314},\"fcnt\":4329,\"devEUI\":\"20635F00C50000FE\"}}},\"streamId\":\"urn:lora:20635F00C50000FE!uplink\",\"created\":\"2020-01-02T13:23:29.572Z\",\"extra\":{},\"location\":{\"provider\":\"lora\",\"alt\":0,\"accuracy\":10000,\"lon\":3.098808,\"lat\":50.664314},\"model\":\"model_abeeway_mastertracker_v5\",\"id\":\"5e0deed15f9d9296d8a883c0\",\"value\":{\"adt\":\"UNUSED\",\"messageType\":\"POSITION\",\"payload\":\"052097612040\",\"temperature\":{\"unit\":\"°C\",\"value\":5.07},\"ack\":2,\"deviceModel\":\"UNKNOWN\",\"resetCause\":\"\",\"battery\":{\"unit\":\"V\",\"valueFirmwarePrev15\":3.39,\"value\":3.63,\"inCharge\":false},\"status\":{\"onDemand\":false,\"appState\":\"idle\",\"userAlert\":false,\"periodic\":false,\"moving\":false,\"appMode\":\"motionTrack\"}},\"timestamp\":\"2020-01-02T13:23:29.971Z\",\"tags\":[\"BT\"]}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 130,
+        "y": 560,
+        "wires": [
+            [
+                "b1bc9168.7ed25"
+            ]
+        ]
+    },
+    {
+        "id": "7a368435.75924c",
+        "type": "json",
+        "z": "a680553d.bcaec8",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 50,
+        "y": 320,
+        "wires": [
+            [
+                "b1bc9168.7ed25"
+            ]
+        ]
+    },
+    {
+        "id": "bed78a62.88fed8",
+        "type": "json",
+        "z": "a680553d.bcaec8",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 260,
+        "y": 220,
+        "wires": [
+            [
+                "ecac115e.24b35"
+            ]
+        ]
+    },
+    {
+        "id": "f0e56e76.8d1cf",
+        "type": "function",
+        "z": "a680553d.bcaec8",
+        "name": "Message de configuration",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 600,
+        "y": 520,
+        "wires": [
+            [
+                "a5133ba7.9bd1a8"
+            ]
+        ]
+    }
+]

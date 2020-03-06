@@ -1,0 +1,60 @@
+[
+    {
+        "id": "99d8ca61.ef6168",
+        "type": "mqtt in",
+        "z": "a680553d.bcaec8",
+        "name": "Datavenue",
+        "topic": "fifo/griotabee",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "fc0e3e07.0ff63",
+        "x": 60,
+        "y": 240,
+        "wires": [
+            [
+                "7a368435.75924c",
+                "bed78a62.88fed8"
+            ]
+        ]
+    },
+    {
+        "id": "fc0e3e07.0ff63",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "Orange Datavenue Secure",
+        "broker": "wss://liveobjects.orange-business.com:443/mqtt",
+        "port": "8883",
+        "tls": "55123de0.d37cd4",
+        "clientid": "liveobject",
+        "usetls": true,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": ""
+    },
+    {
+        "id": "55123de0.d37cd4",
+        "type": "tls-config",
+        "z": "",
+        "name": "Orange Trust",
+        "cert": "",
+        "key": "",
+        "ca": "/usr/src/node-red/cert/CA-Root-Orange.cert",
+        "certname": "",
+        "keyname": "",
+        "caname": "CA-Root-Orange",
+        "servername": "",
+        "verifyservercert": true
+    }
+]
